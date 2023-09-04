@@ -21,7 +21,7 @@ class Gradebook(ttk.Frame):
         instruction.pack(fill=X,pady=10) 
 
         # Chamar a função criada, passando os parametros necesários
-        self.create_form_entry("Name: ",self.name)
+        self.create_form_entry("Nome: ",self.name)
         self.create_form_entry("ID estudante: ",self.student_id)
         self.create_form_entry("Curso: ",self.course_name)
         
@@ -105,10 +105,17 @@ class Gradebook(ttk.Frame):
         toast.show_toast() # mostra a notificação
 
         # salva os dados na tabela
+        # self.final_score_input = ttk.DoubleVar(value=0)
         self.data.append((name,student,course,score))
+        self.name.set("")  # Define o valor da StringVar como vazio
+        self.student_id.set("")  # Define o valor da StringVar como vazio
+        self.course_name.set("")  # Define o valor da StringVar como vazio
+        # self.final_score_input.set(0)  # Define o valor da DoubleVar como 0
         
+
         self.table.destroy()
         self.table = self.create_table()
+        
         
     # Cria a ação da função cancelar
     def on_cancel(self):
@@ -131,7 +138,7 @@ class Gradebook(ttk.Frame):
             paginated=True,
             searchable=True,
             bootstyle=PRIMARY,
-            stripecolor=(self.colors.light, None)
+            # stripecolor=(self.colors.light, None)
         )
         table.pack(fill=BOTH,expand=YES,padx=10,pady=10)
 
