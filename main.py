@@ -21,9 +21,12 @@ class Gradebook(ttk.Frame):
         instruction.pack(fill=X,pady=10) 
 
         # Chamar a função criada, passando os parametros necesários
-        self.create_form_entry("Nome: ",self.name)
-        self.create_form_entry("ID estudante: ",self.student_id)
+        self.name_entry = self.create_form_entry("Nome: ",self.name,  r'^[a-zA-Z\s\']*$')
+        self.create_form_entry("ID estudante: ",self.student_id,  r'^[0-9]*$')
         self.create_form_entry("Curso: ",self.course_name)
+
+        # Foca o cursor na entrada de dados do nome
+        self.name_entry.focus_set()
         
         #Aqui iremos atribuir a uma variavel, para poder manipular 
         self.final_score_input = self.create_form_entry("Pontuação Final: ",self.final_score)
@@ -33,7 +36,7 @@ class Gradebook(ttk.Frame):
         self.table = self.create_table()
 
     # Crição de texto, numeral e inputs
-    def create_form_entry(self,label,variable):
+    def create_form_entry(self,label,variable, regex=None):
         form_field_container = ttk.Frame(self)
         form_field_container.pack(fill=X,expand=YES,pady=5)
 
@@ -43,7 +46,9 @@ class Gradebook(ttk.Frame):
         form_input = ttk.Entry(master=form_field_container,textvariable=variable)
         form_input.pack(side=LEFT,padx=5,fill=X,expand=YES)
 
-        add_regex_validation(form_input, r'^[a-zA-Z0-9_]*$')
+        if regex:
+            add_regex_validation(form_input, regex)
+
         return form_input
     
     # Criar o meter (giro_score)
@@ -91,7 +96,7 @@ class Gradebook(ttk.Frame):
     def on_submit(self):
 
         # pega o conteúdo dos campos de input
-        name = self.name.get()
+        nome = self.name.get()
         student = self.student_id.get()
         course = self.course_name.get()
         score = self.final_score_input.get()
@@ -104,17 +109,23 @@ class Gradebook(ttk.Frame):
         )
         toast.show_toast() # mostra a notificação
 
-        # salva os dados na tabela
-        # self.final_score_input = ttk.DoubleVar(value=0)
-        self.data.append((name,student,course,score))
+        #salva os dados na tabela
+
+        self.data.append((nome,student,course,score))
         self.name.set("")  # Define o valor da StringVar como vazio
         self.student_id.set("")  # Define o valor da StringVar como vazio
         self.course_name.set("")  # Define o valor da StringVar como vazio
-        # self.final_score_input.set(0)  # Define o valor da DoubleVar como 0
+        self.final_score_input.delete(0, END)  # Limpa o valor atual do Entry
+        self.final_score_input.insert(0, "50")  # Insere o valor anterior (50) no Entry
         
 
         self.table.destroy()
         self.table = self.create_table()
+
+        # foca o cursor na entrada após o submit
+        self.name_entry.focus_set()
+
+        
         
         
     # Cria a ação da função cancelar
